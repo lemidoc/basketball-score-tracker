@@ -14,12 +14,12 @@ public class InputHandler {
     public void handleInput() {
         Scanner scanner = new Scanner(System.in);
         boolean running = true;
-
+        System.out.println("(To update score, you need to Start the game first)");
         while (running) {
-            System.out.println("(To update score, you need to Start the game first (2.) ");
+
             System.out.println("Choose an option: ");
             System.out.println("1. Update scores");
-            System.out.println("2. Pause/Resume game");
+            System.out.println("2. Start / Pause / Resume game");
             System.out.println("3. Display scoreboard");
             System.out.println("4. Quit");
 
@@ -67,14 +67,14 @@ public class InputHandler {
             System.out.println("Game resumed.");
         } else if (game.getStatus() == Game.GameStatus.ONGOING) {
             game.pauseGame();
-            System.out.println("Game paused.");
         } else {
             System.out.println("Cannot pause/resume. Game is finished.");
         }
     }
 
     private void displayScoreboard() {
-        System.out.println("Current scoreboard:");
+        System.out.println("Current scoreboard: ");
         scoreboard.displayScoreboard();
+        System.out.println(" ");
     }
 }

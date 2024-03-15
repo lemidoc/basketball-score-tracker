@@ -68,9 +68,11 @@ public class Game {
                 if (durationInSeconds <= 0) {
                     stopTimer(); // Stop the timer when duration reaches zero
                     status = GameStatus.FINISHED; // Mark the game as finished
-                    System.out.println("Time's up! Game over!");
+                    System.out.println("Time's up. Game over!");
                 } else {
-                    System.out.println("Time remaining: " + durationInSeconds + " seconds");
+                    if (durationInSeconds % 5 == 0) {
+                        System.out.println("Time remaining: " + durationInSeconds + " seconds");
+                    }
                 }
             }
         }, 0, 1000); // Schedule the timer to run every second (1000 milliseconds)
