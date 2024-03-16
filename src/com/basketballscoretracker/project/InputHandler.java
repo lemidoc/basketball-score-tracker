@@ -67,10 +67,12 @@ public class InputHandler {
             System.out.println("Game resumed.");
         } else if (game.getStatus() == Game.GameStatus.ONGOING) {
             game.pauseGame();
+            System.out.println("Game paused.");
         } else {
             System.out.println("Cannot pause/resume. Game is finished.");
         }
     }
+
 
     private void displayScoreboard() {
         System.out.println("Current scoreboard: ");

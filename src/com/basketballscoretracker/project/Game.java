@@ -36,15 +36,24 @@ public class Game {
         this.status = status;
     }
 
-    public void startGame() {
+    public synchronized void startGame() {
         if (status == GameStatus.FINISHED) {
-            System.out.println("Cannot resume, the game is already finished.");
+            System.out.println("Cannot start, the game is already finished.");
         } else if (status == GameStatus.PAUSED) {
             status = GameStatus.ONGOING;
-            startTimer(); // Start the timer when resuming the game
-            System.out.println("Game starts now.");
-        } else {
+            if (timer == null) {
+                timer = new Timer(); // Create a new timer only if it hasn't been created yet
+                startTimer(); // Start the timer when resuming the game
+            }
+            System.out.println("Game resumed.");
+        } else if (status == GameStatus.ONGOING) {
             System.out.println("The game is already ongoing.");
+        } else {
+            // If the game has not yet started, initialize the timer and start the game
+            timer = new Timer();
+            startTimer();
+            System.out.println("Game starts now.");
+            status = GameStatus.ONGOING;
         }
     }
 
@@ -64,23 +73,26 @@ public class Game {
         timer.scheduleAtFixedRate(new TimerTask() {
             @Override
             public void run() {
-                durationInSeconds--; // Decrement the duration every tick
-                if (durationInSeconds <= 0) {
-                    stopTimer(); // Stop the timer when duration reaches zero
-                    status = GameStatus.FINISHED; // Mark the game as finished
-                    System.out.println("Time's up. Game over!");
-                } else {
-                    if (durationInSeconds % 5 == 0) {
+                synchronized (Game.this) { // Synchronize to avoid race conditions
+                    durationInSeconds--;
+                    if (durationInSeconds <= 0) {
+                        stopTimer();
+                        status = GameStatus.FINISHED;
+                        System.out.println("Time's up. Game over!");
+                    } else if (durationInSeconds % 5 == 0) {
                         System.out.println("Time remaining: " + durationInSeconds + " seconds");
                     }
                 }
             }
-        }, 0, 1000); // Schedule the timer to run every second (1000 milliseconds)
+        }, 0, 1000);
     }
 
     // Internal method to stop the timer
-    private void stopTimer() {
-        timer.cancel();
+    private synchronized void stopTimer() {
+        if (timer != null) {
+            timer.cancel();
+            timer = null; // Reset the timer reference
+        }
     }
 
     public int getHomeTeamScore() {
